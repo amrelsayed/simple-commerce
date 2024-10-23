@@ -10,12 +10,12 @@ class ListProductsAction
 {
     public function execute(Request $request): LengthAwarePaginator
     {
-        $products = Cache::remember("products", 60 * 60, function () use ($request) {
+        $products = Cache::remember($request, 60 * 60, function () use ($request) {
             // initiate query
             $query = Product::query();
 
             // filter query
-            if ($request->has("name")) {
+            if ($request->has(key: "name")) {
                 $query->where("name", "like", "%" . $request->name . "%");
             }
 

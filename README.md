@@ -1,66 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Simple-Commerce Api
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Example project containting key components for creating api's with Laravel11
 
-## About Laravel
+## Project setup
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1- Clone this repo to your local machine
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+`git clone https://github.com/amrelsayed/simple-commerce.git`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2- You can run the project localy by two ways either via Docker or by `php artisan serve` if you used the latest you have to make sure that composer, php, and redis are installed in your machine. If you choosed Docker only you have to have Docker installed
 
-## Learning Laravel
+I'll assume you have Docker installed
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3- run this command `./vendor/bin/sail up` to run containers
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+4- run `./vendor/bin/sail composer install`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5- run `copy .env.example .env`
 
-## Laravel Sponsors
+6- run `./vendor/bin/sail artisan key:generate`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+7- run `./vendor/bin/sail artisan migrate --seed`
 
-### Premium Partners
+7- you can run unit tests via this command `./vendor/bin/sail artisan test`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Api's
 
-## Contributing
+we have the following api's
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Products List**
 
-## Code of Conduct
+This is a public api all users can access it without authentication
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Example:
 
-## Security Vulnerabilities
+`curl --location --request GET 'http://localhost/api/products?name=cu&category_id=1&price_from=20&price_to=150' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "user_id": 1,
+  "products": [
+    { "id": 1, "quantity": 2 },
+    { "id": 3, "quantity": 1 }
+  ]
+}
+'`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Login**
 
-## License
+Example:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+`curl --location --request POST 'http://localhost/api/login' \
+--form 'email="test@example.com"' \
+--form 'password="password"'`
+
+**Create Order**
+
+Example:
+
+`curl --location --request POST 'http://localhost/api/orders' \
+--header 'Authorization: Bearer 2|sFr6xGvtr8kxCekY7Ne8RGlAguoM01XGartY1j5w75699478' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "user_id": 1,
+  "products": [
+    { "id": 1, "quantity": 2 },
+    { "id": 3, "quantity": 1 }
+  ]
+}
+'`
+
+**Order Details**
+
+Example
+
+`curl --location --request GET 'http://localhost/api/orders/1' \
+--header 'Authorization: Bearer 2|sFr6xGvtr8kxCekY7Ne8RGlAguoM01XGartY1j5w75699478' \
+--header 'Content-Type: application/json' \
+--data-raw '
+{"data": {
+        "id": 1,
+        "total_amount": 1579,
+        "products": [
+            {
+                "id": 1,
+                "name": "et",
+                "price": 666,
+                "stock": 51
+            },
+            {
+                "id": 3,
+                "name": "eos",
+                "price": 247,
+                "stock": 47
+            }
+        ]
+    }
+}'`
