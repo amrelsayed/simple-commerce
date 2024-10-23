@@ -30,7 +30,7 @@ class OrderController extends Controller
 
             return response()->json([
                 'message' => 'Order placed successfully',
-                'order' => new OrderResource($order),
+                'data' => new OrderResource($order),
             ], 201);
 
         } catch (\Exception $e) {
@@ -47,6 +47,6 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return new OrderResource($order->load('products'));
     }
 }
