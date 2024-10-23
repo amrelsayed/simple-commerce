@@ -10,7 +10,9 @@ class ListProductsAction
 {
     public function execute(Request $request): LengthAwarePaginator
     {
-        $products = Cache::remember($request, 60 * 60, function () use ($request) {
+        $cacheKey = $this->generateCacheKey($request);
+
+        $products = Cache::remember($cacheKey, 60 * 60, function () use ($request) {
             // initiate query
             $query = Product::query();
 
@@ -40,5 +42,31 @@ class ListProductsAction
         });
 
         return $products;
+    }
+
+    protected function generateCacheKey(Request $request): string
+    {
+        $key = 'products:';
+
+        if ($request->has("name")) {
+            $key .= 'name_' . $request->name . ':';
+        }
+
+        if ($request->has("price_from")) {
+            $key .= 'price_from_' . $request->price_from . ':';
+        }
+
+        if ($request->has("price_to")) {
+            $key .= 'price_to_' . $request->price_to . ':';
+        }
+
+        if ($request->has("category_id")) {
+            $key .= 'category_' . $request->category_id . ':';
+        }
+
+        $page = $request->get('page', 1);
+        $key .= 'page_' . $page;
+
+        return rtrim($key, ':');
     }
 }

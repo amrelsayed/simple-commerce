@@ -24,6 +24,8 @@ I'll assume you have Docker installed
 
 7- you can run unit tests via this command `./vendor/bin/sail artisan test`
 
+8- I've **Mailpit** installed when created an order you can check email on this url: http://localhost:8025
+
 ## Api's
 
 we have the following api's

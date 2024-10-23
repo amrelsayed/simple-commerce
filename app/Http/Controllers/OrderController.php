@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Order\CreateOrderAction;
+use App\Events\OrderPlaced;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
@@ -27,6 +28,8 @@ class OrderController extends Controller
             DB::commit();
 
             $order->load(relations: 'products');
+
+            OrderPlaced::dispatch($order);
 
             return response()->json([
                 'message' => 'Order placed successfully',
